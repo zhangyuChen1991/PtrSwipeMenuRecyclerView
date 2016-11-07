@@ -1,4 +1,4 @@
-package com.cc.library.view;
+package com.library.widget;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.cc.library.view", appContext.getPackageName());
+        assertEquals("com.library.widget.test", appContext.getPackageName());
     }
 }
