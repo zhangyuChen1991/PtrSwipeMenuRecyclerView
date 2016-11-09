@@ -11,10 +11,10 @@ import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 /**
- * Created by Administrator on 2016/11/8.
+ * Created by zhangyu on 2016/11/8.
  */
 public class SwipeMenuLayout extends FrameLayout {
-    private static final String TAG = "SwipeMenuLayout1";
+    private static final String TAG = "SwipeMenuLayout";
 
     private View contentView;
     private LinearLayout menuView;
@@ -47,9 +47,13 @@ public class SwipeMenuLayout extends FrameLayout {
         this.context = context;
         mScroller = new Scroller(context);
 
+
+
         LayoutParams contentParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
         contentView.setLayoutParams(contentParams);
         menuView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+        setLayoutParams(contentParams);
 
         if (null != contentView)
             addView(contentView);
@@ -60,25 +64,8 @@ public class SwipeMenuLayout extends FrameLayout {
         Log.d(TAG, "init.. menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
     }
 
-    private int preTouchX;
-    private int nowTouchX;
-    private int startX;
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.i(TAG, "onInterceptTouchEvent  ACTION_DOWN..");
-                break;
-            case MotionEvent.ACTION_MOVE:
-                Log.i(TAG, "onInterceptTouchEvent  ACTION_MOVE..");
-                break;
-            case MotionEvent.ACTION_UP:
-                Log.i(TAG, "onInterceptTouchEvent  ACTION_UP..");
-                break;
-        }
-        return super.onInterceptTouchEvent(event);
-    }
+    private float preTouchX,preTouchY;
+    private float nowTouchX,nowTouchY;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -88,19 +75,24 @@ public class SwipeMenuLayout extends FrameLayout {
                 if (!mScroller.computeScrollOffset()) { // 滚动已经结束
 
                     Log.i(TAG, "ACTION_DOWN..");
-                    startX = (int) event.getX();
-                    preTouchX = startX;
+                    preTouchX = event.getX();
+                    preTouchY = event.getY();
                     return true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScroller.computeScrollOffset()) { // 滚动已结束
-                    nowTouchX = (int) event.getX();
+                    nowTouchX = event.getX();
+                    nowTouchY = event.getY();
+
+                    if(!isHorizontalScroll(preTouchX,preTouchY,nowTouchX,nowTouchY)){
+                        return super.onTouchEvent(event);
+                    }
 
                     //当从0点往左滑动时，currx为整数，滑得越远，数越大
                     int currX = mScroller.getCurrX();
-                    Log.v(TAG, "currX = " + currX);
-                    int distanceX = nowTouchX - preTouchX;
+                    Log.v(TAG, "currX = " + currX + "  ,menuView.getWidth() = "+menuView.getWidth());
+                    float distanceX = nowTouchX - preTouchX;
                     if (currX < menuView.getWidth() && currX > 0) {//菜单已被拉出，往左右都可滑
                         return doScroll(distanceX);
                     }
@@ -114,16 +106,42 @@ public class SwipeMenuLayout extends FrameLayout {
                     if(currX <= 0 && distanceX < 0) {
                         return doScroll(distanceX);
                     }
+
+                    preTouchX = nowTouchX;
+                    preTouchY = nowTouchY;
                 }
                 break;
             case MotionEvent.ACTION_UP:
+                Log.i(TAG,"ACTION_UP..");
                 startAutoScroll();
                 break;
         }
         return super.onTouchEvent(event);
     }
 
+    /**
+     * 判断是横向滑动还是纵向滑动
+     *
+     * @param startX
+     * @param startY
+     * @param secondX
+     * @param secondY
+     * @return
+     */
+
+    private boolean isHorizontalScroll(float startX, float startY, float secondX, float secondY) {
+        boolean ret = false;
+        int distanceX = (int) Math.abs(startX - secondX);
+        int distanceY = (int) Math.abs(startY - secondY);
+
+        Log.e(TAG, "p1X = " + startX + "  ,p1Y = " + startY + "  ,secondX = " + secondX + "  ,secondY = " + secondY + "  ,distanceX = " + distanceX + "  ,distanceY = " + distanceY);
+        if (distanceX > distanceY)
+            ret = true;
+        return ret;
+    }
+
     private void startAutoScroll() {
+        Log.i(TAG,"startAutoScroll..");
         int currX = mScroller.getCurrX();
         if(currX >= menuView.getWidth()*0.5){
             smoothOpenMenu();
@@ -140,7 +158,7 @@ public class SwipeMenuLayout extends FrameLayout {
         smoothScrollTo(0,0);
     }
 
-    private boolean doScroll(int distanceX) {
+    private boolean doScroll(float distanceX) {
         setScrollDistance(distanceX);
         preTouchX = nowTouchX;
         return true;
@@ -151,7 +169,7 @@ public class SwipeMenuLayout extends FrameLayout {
      *
      * @param distanceX
      */
-    private void setScrollDistance(int distanceX) {
+    private void setScrollDistance(float distanceX) {
         float X = -getScrollX();
         mScroller.setFinalX((-(int) (X + distanceX)));
         invalidate();
@@ -161,19 +179,16 @@ public class SwipeMenuLayout extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         Log.d(TAG, "contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
-        Log.d(TAG, "menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
-
         super.onLayout(changed, left, top, right, bottom);
 
-        if (contentView != null && contentView.getWidth() != 0 && contentView.getHeight() != 0) {
-            Log.d(TAG, "contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
-            Log.d(TAG, "menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
-
-
+        int contentViewWidth = contentView.getWidth();
+        int contentViewHeight = contentView.getHeight();
+        int menuViewWidth = menuView.getWidth();
+        if (contentView != null && contentViewWidth != 0 && contentViewHeight != 0) {
             contentView.layout(0, 0, contentView.getWidth(), contentView.getHeight());
 
             if (menuView != null) {
-                menuView.layout(contentView.getWidth(), 0, contentView.getWidth() + menuView.getWidth(), contentView.getHeight());
+                menuView.layout(contentViewWidth, 0, contentViewWidth + menuViewWidth, contentViewHeight);
             }
         }
     }
