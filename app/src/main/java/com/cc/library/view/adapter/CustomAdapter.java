@@ -11,6 +11,8 @@ import android.widget.TextView;
 import com.cc.library.view.R;
 import com.library.widget.SwipeMenuLayout;
 
+import java.util.zip.Inflater;
+
 /**
  * RecyclerView使用的Adapter
  * 1.需要手动实现ViewHolder类(这里写成内部类)
@@ -40,12 +42,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     @Override
     public CustomAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        View contentView = View.inflate(context, R.layout.content_view_for_test, null);
-        LinearLayout menuView = (LinearLayout) View.inflate(context, R.layout.menu_for_test, null);
 
-        SwipeMenuLayout SwipeMenuLayout = new SwipeMenuLayout(context, contentView, menuView);
+        View contentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_view_for_test, parent,false);
 
-        return new ViewHolder(SwipeMenuLayout);
+        return new ViewHolder(contentView);
     }
 
     //onBind 给布局设置数据

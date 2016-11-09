@@ -10,5 +10,8 @@
         android:gravity="center"
         android:textColor="@color/white"
         android:background="@color/deepskyblue"
+        android:drawableRight="@mipmap/ic_launcher"
         android:text="content"/>
+
+
 </LinearLayout>

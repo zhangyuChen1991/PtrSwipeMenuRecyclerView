@@ -8,13 +8,16 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.cc.library.view.adapter.CustomAdapter;
+import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
+import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.SwipeMenuLayout;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private LinearLayout rootContainer;
-    private RecyclerView recyclerView;
+    private PtrSwipeMenuRecyclerView recyclerView;
     private CustomAdapter adapter;
+    private SwipeAdapter swipeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,19 +29,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initResources() {
         adapter = new CustomAdapter();
+        swipeAdapter = new SwipeAdapter();
     }
 
     private void initView() {
         rootContainer = (LinearLayout) findViewById(R.id.activity_container);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        recyclerView = (PtrSwipeMenuRecyclerView) findViewById(R.id.recycler_view);
         //参数：context,横向或纵向滑动，是否颠倒显示数据
         recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
-        recyclerView.setAdapter(adapter);
-        recyclerView.setVisibility(View.GONE);
+        recyclerView.setAdapter(swipeAdapter);
+//        recyclerView.setVisibility(View.GONE);
 
         rootContainer.setOnClickListener(this);
 
-        additem();
+//        additem();
     }
 
     private void additem() {
