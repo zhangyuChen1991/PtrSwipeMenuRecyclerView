@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         rootContainer.setOnClickListener(this);
 
-//        additem();
+        additem();
     }
 
     private void additem() {

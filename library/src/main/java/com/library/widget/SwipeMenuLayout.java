@@ -67,6 +67,7 @@ public class SwipeMenuLayout extends FrameLayout {
     private float preTouchX,preTouchY;
     private float nowTouchX,nowTouchY;
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
@@ -84,10 +85,6 @@ public class SwipeMenuLayout extends FrameLayout {
                 if (!mScroller.computeScrollOffset()) { // 滚动已结束
                     nowTouchX = event.getX();
                     nowTouchY = event.getY();
-
-                    if(!isHorizontalScroll(preTouchX,preTouchY,nowTouchX,nowTouchY)){
-                        return super.onTouchEvent(event);
-                    }
 
                     //当从0点往左滑动时，currx为整数，滑得越远，数越大
                     int currX = mScroller.getCurrX();
@@ -119,31 +116,11 @@ public class SwipeMenuLayout extends FrameLayout {
         return super.onTouchEvent(event);
     }
 
-    /**
-     * 判断是横向滑动还是纵向滑动
-     *
-     * @param startX
-     * @param startY
-     * @param secondX
-     * @param secondY
-     * @return
-     */
-
-    private boolean isHorizontalScroll(float startX, float startY, float secondX, float secondY) {
-        boolean ret = false;
-        int distanceX = (int) Math.abs(startX - secondX);
-        int distanceY = (int) Math.abs(startY - secondY);
-
-        Log.e(TAG, "p1X = " + startX + "  ,p1Y = " + startY + "  ,secondX = " + secondX + "  ,secondY = " + secondY + "  ,distanceX = " + distanceX + "  ,distanceY = " + distanceY);
-        if (distanceX > distanceY)
-            ret = true;
-        return ret;
-    }
 
     private void startAutoScroll() {
-        Log.i(TAG,"startAutoScroll..");
-        int currX = mScroller.getCurrX();
-        if(currX >= menuView.getWidth()*0.5){
+        int scrollX = getScrollX();
+        Log.i(TAG, "startAutoScroll..scrollX = " + scrollX);
+        if(scrollX >= menuView.getWidth()*0.5){
             smoothOpenMenu();
         }else{
             smoothCloseMenu();
