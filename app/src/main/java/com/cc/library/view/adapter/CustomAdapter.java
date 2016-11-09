@@ -1,9 +1,11 @@
 package com.cc.library.view.adapter;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cc.library.view.R;
@@ -17,7 +19,7 @@ import com.library.widget.SwipeMenuLayout;
  * Created by zhangyu on 2016/10/31.
  */
 
-public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder>{
+public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> {
 
     private RecyclerViewOnClick recyclerViewOnClick;
     private String[] data;
@@ -37,9 +39,13 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     //设置ViewHolder 把需要绑定的布局传进去
     @Override
     public CustomAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        SwipeMenuLayout swipeMenuLayout = (SwipeMenuLayout) LayoutInflater.from(parent.getContext()).inflate(R.layout.default_item, parent, false);
+        Context context = parent.getContext();
+        View contentView = View.inflate(context, R.layout.content_view_for_test, null);
+        LinearLayout menuView = (LinearLayout) View.inflate(context, R.layout.menu_for_test, null);
 
-        return new ViewHolder(swipeMenuLayout);
+        SwipeMenuLayout SwipeMenuLayout = new SwipeMenuLayout(context, contentView, menuView);
+
+        return new ViewHolder(SwipeMenuLayout);
     }
 
     //onBind 给布局设置数据
@@ -55,19 +61,20 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     /**
      * 设置监听
+     *
      * @param itemView 需要被监听的itemView
-     * @param tv 需要被监听的textview
+     * @param tv       需要被监听的textview
      * @param position item位置
      */
-    private void setOnClick(final View itemView, final TextView tv, final int position){
+    private void setOnClick(final View itemView, final TextView tv, final int position) {
         View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v.getId() == itemView.getId()){
-                    if(null != recyclerViewOnClick)
+                if (v.getId() == itemView.getId()) {
+                    if (null != recyclerViewOnClick)
                         recyclerViewOnClick.onItemClick(position);
-                }else if(v.getId() == tv.getId()){
-                    if(null != recyclerViewOnClick)
+                } else if (v.getId() == tv.getId()) {
+                    if (null != recyclerViewOnClick)
                         recyclerViewOnClick.onTextOnclick(position);
                 }
             }
@@ -93,8 +100,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     /**
      * 监听回调接口
      */
-    public interface RecyclerViewOnClick{
+    public interface RecyclerViewOnClick {
         void onItemClick(int position);
+
         void onTextOnclick(int position);
     }
 }

@@ -5,32 +5,30 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.Interpolator;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
 /**
- * Created by zhangyu on 2016/11/7.
+ * Created by Administrator on 2016/11/8.
  */
+public class SwipeMenuLayout extends FrameLayout {
+    private static final String TAG = "SwipeMenuLayout1";
 
-public class SwipeMenuLayout extends LinearLayout {
-    private static final String TAG = "SwipeMenuLayout";
-    private LinearLayout contentContainer, menuContainer;
-    private Scroller mScroller;
+    private View contentView;
+    private LinearLayout menuView;
     private Context context;
-    private int preTouchX;
-    private int nowTouchX;
-    private int startX;
-    private View menuView;
-
-
-    public SwipeMenuLayout(Context context) {
-        super(context);
-        init(context, null);
-    }
+    private Scroller mScroller;
 
     public SwipeMenuLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
+    }
+
+    public SwipeMenuLayout(Context context) {
+        super(context);
+        init(context, null);
     }
 
     public SwipeMenuLayout(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -38,12 +36,48 @@ public class SwipeMenuLayout extends LinearLayout {
         init(context, attrs);
     }
 
+    public SwipeMenuLayout(Context context, View contentView, LinearLayout menuView) {
+        super(context);
+        this.contentView = contentView;
+        this.menuView = menuView;
+        init(context, null);
+    }
 
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
         mScroller = new Scroller(context);
-        contentContainer = (LinearLayout) findViewById(R.id.content_container);
-        menuContainer = (LinearLayout) findViewById(R.id.menu_container);
+
+        LayoutParams contentParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
+        contentView.setLayoutParams(contentParams);
+        menuView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+        if (null != contentView)
+            addView(contentView);
+        if (null != menuView)
+            addView(menuView);
+
+        Log.d(TAG, "init.. contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
+        Log.d(TAG, "init.. menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
+    }
+
+    private int preTouchX;
+    private int nowTouchX;
+    private int startX;
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.i(TAG, "onInterceptTouchEvent  ACTION_DOWN..");
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.i(TAG, "onInterceptTouchEvent  ACTION_MOVE..");
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.i(TAG, "onInterceptTouchEvent  ACTION_UP..");
+                break;
+        }
+        return super.onInterceptTouchEvent(event);
     }
 
     @Override
@@ -51,71 +85,65 @@ public class SwipeMenuLayout extends LinearLayout {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 //点击停止滚动，或者开始下一轮滚动的数据设置
-                if (mScroller.computeScrollOffset()) { // 滚动还未结束
-                    mScroller.abortAnimation();        //停止滚动
-                } else {
+                if (!mScroller.computeScrollOffset()) { // 滚动已经结束
+
                     Log.i(TAG, "ACTION_DOWN..");
                     startX = (int) event.getX();
                     preTouchX = startX;
+                    return true;
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!mScroller.computeScrollOffset()) { // 滚动已结束
                     nowTouchX = (int) event.getX();
 
+                    //当从0点往左滑动时，currx为整数，滑得越远，数越大
+                    int currX = mScroller.getCurrX();
+                    Log.v(TAG, "currX = " + currX);
                     int distanceX = nowTouchX - preTouchX;
-                    setScrollDistance(distanceX);
-                    preTouchX = nowTouchX;
+                    if (currX < menuView.getWidth() && currX > 0) {//菜单已被拉出，往左右都可滑
+                        return doScroll(distanceX);
+                    }
+
+                    //菜单已被完全拉出，往右可滑
+                    if(currX >= menuView.getWidth() && distanceX > 0){
+                        return doScroll(distanceX);
+                    }
+
+                    //菜单未被拉出，往左可滑
+                    if(currX <= 0 && distanceX < 0) {
+                        return doScroll(distanceX);
+                    }
                 }
                 break;
             case MotionEvent.ACTION_UP:
                 startAutoScroll();
                 break;
         }
-        return true;
+        return super.onTouchEvent(event);
     }
 
-    /**
-     * 自动滚动
-     */
     private void startAutoScroll() {
-        if (menuView == null)
-            return;
-        int mWidth = menuView.getWidth();
         int currX = mScroller.getCurrX();
-
-        if (Math.abs(currX) > mWidth * 0.5f) {
-            smoothShowMenu();
+        if(currX >= menuView.getWidth()*0.5){
+            smoothOpenMenu();
         }else{
-            scrollBack();
+            smoothCloseMenu();
         }
     }
 
-    private void smoothShowMenu() {
-        //TODO 滚动到显示菜单的位置
+    private void smoothOpenMenu() {
+        smoothScrollTo(menuView.getWidth(),0);
     }
 
-    /**
-     * 添加菜单
-     *
-     * @param menuView 需要添加的菜单view
-     * @return true:添加成功  false：添加失败
-     */
-    public boolean addMenu(View menuView) {
-        if (this.menuView == null) {
-            this.menuView = menuView;
-            menuContainer.addView(menuView);
-            return true;
-        }
-        return false;
+    private void smoothCloseMenu() {
+        smoothScrollTo(0,0);
     }
 
-
-    /**
-     * 回滚到起始状态
-     */
-    public void scrollBack() {
-        smoothScrollTo(0, 0);
+    private boolean doScroll(int distanceX) {
+        setScrollDistance(distanceX);
+        preTouchX = nowTouchX;
+        return true;
     }
 
     /**
@@ -129,6 +157,26 @@ public class SwipeMenuLayout extends LinearLayout {
         invalidate();
     }
 
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        Log.d(TAG, "contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
+        Log.d(TAG, "menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
+
+        super.onLayout(changed, left, top, right, bottom);
+
+        if (contentView != null && contentView.getWidth() != 0 && contentView.getHeight() != 0) {
+            Log.d(TAG, "contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
+            Log.d(TAG, "menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
+
+
+            contentView.layout(0, 0, contentView.getWidth(), contentView.getHeight());
+
+            if (menuView != null) {
+                menuView.layout(contentView.getWidth(), 0, contentView.getWidth() + menuView.getWidth(), contentView.getHeight());
+            }
+        }
+    }
 
     //调用此方法滚动到目标位置
     public void smoothScrollTo(int fx, int fy) {
