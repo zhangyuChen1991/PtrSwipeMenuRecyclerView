@@ -170,6 +170,14 @@ public class SwipeMenuLayout extends FrameLayout {
         }
     }
 
+    /**
+     * 获取menuView
+     * @return
+     */
+    public LinearLayout getMenuView() {
+        return menuView;
+    }
+
     //调用此方法滚动到目标位置
     public void smoothScrollTo(int fx, int fy) {
         int dx = fx - mScroller.getFinalX();

@@ -1,6 +1,8 @@
 package com.library.widget.adapter;
 
+import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -11,15 +13,16 @@ import com.library.widget.SwipeMenuLayout;
  * Created by zhangyu on 2016/11/9.
  */
 public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
-
+    private static final String TAG = "SwipeMenuAdapter";
     private LinearLayout menuView;
     private View contentView;
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        menuView = createMenuView(parent,viewType);
-        contentView = createContentView(parent,viewType);
-        SwipeMenuLayout swipeMenuLayout = new SwipeMenuLayout(parent.getContext(),contentView,menuView);
+        Log.d(TAG, "onCreateViewHolder..");
+        menuView = createMenuView(parent, viewType);
+        contentView = createContentView(parent, viewType);
+        SwipeMenuLayout swipeMenuLayout = new SwipeMenuLayout(parent.getContext(), contentView, menuView);
         return onCreateThisViewHolder(swipeMenuLayout, viewType);
     }
 
@@ -50,4 +53,5 @@ public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
 
     @Override
     public abstract int getItemCount();
+
 }

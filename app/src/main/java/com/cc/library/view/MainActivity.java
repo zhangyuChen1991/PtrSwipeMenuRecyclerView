@@ -12,6 +12,7 @@ import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
 import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.SwipeMenuLayout;
+import com.library.widget.interfaces.OnMenuClickListener;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private LinearLayout rootContainer;
@@ -36,23 +37,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rootContainer = (LinearLayout) findViewById(R.id.activity_container);
         recyclerView = (PtrSwipeMenuRecyclerView) findViewById(R.id.recycler_view);
         //参数：context,横向或纵向滑动，是否颠倒显示数据
-        recyclerView.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(swipeAdapter);
-//        recyclerView.setVisibility(View.GONE);
+        //添加菜单点击监听事件
+        recyclerView.setOnMenuClickListener(onMenuClickListener);
 
         rootContainer.setOnClickListener(this);
 
         additem();
     }
 
+    private OnMenuClickListener onMenuClickListener = new OnMenuClickListener() {
+        @Override
+        public void onMenuClick(View view, int position) {
+            if (view.getId() == R.id.menu1)
+                ToastUtil.showToast("menu1, position:"+position, 0);
+            if (view.getId() == R.id.menu2)
+                ToastUtil.showToast("menu2, position:"+position, 0);
+
+        }
+    };
+
     private void additem() {
 
-        View contentView = View.inflate(this,R.layout.content_view_for_test,null);
-        LinearLayout menuView = (LinearLayout) View.inflate(this,R.layout.menu_for_test,null);
+        View contentView = View.inflate(this, R.layout.content_view_for_test, null);
+        LinearLayout menuView = (LinearLayout) View.inflate(this, R.layout.menu_for_test, null);
 
-        SwipeMenuLayout SwipeMenuLayout = new SwipeMenuLayout(this,contentView,menuView);
+        SwipeMenuLayout SwipeMenuLayout = new SwipeMenuLayout(this, contentView, menuView);
 
-        rootContainer.addView(SwipeMenuLayout,0);
+        rootContainer.addView(SwipeMenuLayout, 0);
     }
 
 

@@ -7,6 +7,9 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.LinearLayout;
+
+import com.library.widget.interfaces.OnMenuClickListener;
 
 /**
  * Created by zhangyu on 2016/11/7.
@@ -14,7 +17,10 @@ import android.view.View;
 
 public class PtrSwipeMenuRecyclerView extends RecyclerView {
     private static final String TAG = "PSMRecyclerView";
-    boolean isVerticalScroll = true;
+    private boolean isVerticalScroll = true;
+
+    private static OnMenuClickListener onMenuClickListener;
+
     public PtrSwipeMenuRecyclerView(Context context) {
         super(context);
     }
@@ -34,15 +40,44 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
         super.setAdapter(adapter);
     }
 
-    public abstract class ViewHolder extends RecyclerView.ViewHolder{
-
+    /**
+     * 重写ViewHolder
+     * 使用PtrSwipeMenuRecyclerView，必须配合PtrSwipeMenuRecyclerView.ViewHolder使用，否则将会出错
+     */
+    public static abstract class ViewHolder extends RecyclerView.ViewHolder {
+        SwipeMenuLayout swipeMenuLayout;
+        LinearLayout menuView;
         public ViewHolder(View itemView) {
             super(itemView);
+            swipeMenuLayout = (SwipeMenuLayout) itemView;
+            menuView = swipeMenuLayout.getMenuView();
+            setOnMenuClickListener();
         }
+
+        private void setOnMenuClickListener(){
+            for(int i = 0;i < menuView.getChildCount();i++){
+                menuView.getChildAt(i).setOnClickListener(onClickListener);
+            }
+
+        }
+
+        private View.OnClickListener onClickListener = new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                for (int i = 0; i < menuView.getChildCount(); i++) {
+                    if(view.getId() == menuView.getChildAt(i).getId()){
+                        if(null != onMenuClickListener){
+                            onMenuClickListener.onMenuClick(view,getAdapterPosition());//触发菜单点击事件
+                        }
+                    }
+                }
+            }
+        };
     }
 
     boolean thisTouchHadDeal = false;
     private int startX, nowTouchX, startY, nowTouchY;
+
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.d(TAG, "onInterceptTouchEvent.. isVerticalScroll = " + isVerticalScroll);
@@ -77,6 +112,14 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
         }
 
         return super.onInterceptTouchEvent(ev);
+    }
+
+    /**
+     * 设置菜单点击监听
+     * @param onMenuClickListener
+     */
+    public void setOnMenuClickListener(OnMenuClickListener onMenuClickListener) {
+        this.onMenuClickListener = onMenuClickListener;
     }
 
     /**

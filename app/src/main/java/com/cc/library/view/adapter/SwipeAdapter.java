@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.cc.library.view.R;
+import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.adapter.SwipeMenuAdapter;
 
 /**
@@ -14,7 +15,7 @@ import com.library.widget.adapter.SwipeMenuAdapter;
  */
 public class SwipeAdapter extends SwipeMenuAdapter {
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public class ViewHolder extends PtrSwipeMenuRecyclerView.ViewHolder{
 
         public ViewHolder(View itemView) {
             super(itemView);
