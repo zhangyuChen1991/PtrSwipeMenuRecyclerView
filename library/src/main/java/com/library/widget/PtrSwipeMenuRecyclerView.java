@@ -8,45 +8,88 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Scroller;
 
+import com.library.widget.adapter.SwipeMenuAdapter;
 import com.library.widget.interfaces.OnMenuClickListener;
+
+import java.io.InvalidClassException;
 
 /**
  * Created by zhangyu on 2016/11/7.
  */
-
 public class PtrSwipeMenuRecyclerView extends RecyclerView {
     private static final String TAG = "PSMRecyclerView";
     private boolean isVerticalScroll = true;
+    private Context context;
+    private Scroller mScroller;
+    private SwipeMenuAdapter adapter;
+    private HeaderView headerView;
 
     private static OnMenuClickListener onMenuClickListener;
 
     public PtrSwipeMenuRecyclerView(Context context) {
         super(context);
+        init(context);
     }
 
     public PtrSwipeMenuRecyclerView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-
+        init(context);
     }
 
     public PtrSwipeMenuRecyclerView(Context context, @Nullable AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init(context);
     }
 
     @Override
     public void setAdapter(Adapter adapter) {
-
         super.setAdapter(adapter);
+    }
+
+
+    private void init(Context context) {
+        mScroller = new Scroller(context);
+        this.context = context;
+        if (getAdapter() instanceof SwipeMenuAdapter)
+            adapter = (SwipeMenuAdapter) getAdapter();
+        else {
+            try {
+                throw new InvalidClassException("所使用Adapter并非SwipeMenuAdapter的子类");
+            } catch (InvalidClassException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+    }
+
+    private void addHeader() {
+        headerView = new HeaderView(context);
+        addView(headerView,0);
+    }
+
+    private void addFooter() {
+        FooterView footerView = new FooterView(context);
+        addView(footerView);
+    }
+
+    @Override
+    protected void onFinishInflate() {
+        super.onFinishInflate();
+        addHeader();
+        addFooter();
     }
 
     /**
      * 重写ViewHolder
-     * 使用PtrSwipeMenuRecyclerView，必须配合PtrSwipeMenuRecyclerView.ViewHolder使用，否则将会出错
+     * 使用PtrSwipeMenuRecyclerView，必须配合PtrSwipeMenuRecyclerView.ViewHolder，否则将会出错
      */
     public static abstract class ViewHolder extends RecyclerView.ViewHolder {
         SwipeMenuLayout swipeMenuLayout;
         LinearLayout menuView;
+
         public ViewHolder(View itemView) {
             super(itemView);
             swipeMenuLayout = (SwipeMenuLayout) itemView;
@@ -54,8 +97,8 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             setOnMenuClickListener();
         }
 
-        private void setOnMenuClickListener(){
-            for(int i = 0;i < menuView.getChildCount();i++){
+        private void setOnMenuClickListener() {
+            for (int i = 0; i < menuView.getChildCount(); i++) {
                 menuView.getChildAt(i).setOnClickListener(onClickListener);
             }
 
@@ -65,9 +108,9 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             @Override
             public void onClick(View view) {
                 for (int i = 0; i < menuView.getChildCount(); i++) {
-                    if(view.getId() == menuView.getChildAt(i).getId()){
-                        if(null != onMenuClickListener){
-                            onMenuClickListener.onMenuClick(view,getAdapterPosition());//触发菜单点击事件
+                    if (view.getId() == menuView.getChildAt(i).getId()) {
+                        if (null != onMenuClickListener) {
+                            onMenuClickListener.onMenuClick(view, getAdapterPosition());//触发菜单点击事件
                         }
                     }
                 }
@@ -116,6 +159,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
 
     /**
      * 设置菜单点击监听
+     *
      * @param onMenuClickListener
      */
     public void setOnMenuClickListener(OnMenuClickListener onMenuClickListener) {
