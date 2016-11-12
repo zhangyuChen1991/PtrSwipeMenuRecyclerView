@@ -65,21 +65,9 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
 
     }
 
-    private void addHeader() {
-        headerView = new HeaderView(context);
-        addView(headerView,0);
-    }
-
-    private void addFooter() {
-        FooterView footerView = new FooterView(context);
-        addView(footerView);
-    }
-
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        addHeader();
-        addFooter();
     }
 
     /**

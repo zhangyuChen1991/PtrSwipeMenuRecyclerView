@@ -44,7 +44,8 @@ public class SwipeAdapter extends SwipeMenuAdapter {
     }
 
     @Override
-    public int getItemCount() {
+    public int getThisItemCount() {
         return 17;
     }
+
 }
