@@ -2,6 +2,7 @@ package com.library.widget;
 
 import android.content.Context;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -25,6 +26,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     private Scroller mScroller;
     private SwipeMenuAdapter adapter;
     private HeaderView headerView;
+    private FooterView footerView;
 
     private static OnMenuClickListener onMenuClickListener;
 
@@ -46,15 +48,11 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     @Override
     public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
-    }
-
-
-    private void init(Context context) {
-        mScroller = new Scroller(context);
-        this.context = context;
-        if (getAdapter() instanceof SwipeMenuAdapter)
-            adapter = (SwipeMenuAdapter) getAdapter();
-        else {
+        if (adapter instanceof SwipeMenuAdapter) {
+            this.adapter = (SwipeMenuAdapter) adapter;
+            headerView = this.adapter.getHeaderView();
+            footerView = this.adapter.getFooterView();
+        } else {
             try {
                 throw new InvalidClassException("所使用Adapter并非SwipeMenuAdapter的子类");
             } catch (InvalidClassException e) {
@@ -62,12 +60,13 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             }
         }
 
-
     }
 
-    @Override
-    protected void onFinishInflate() {
-        super.onFinishInflate();
+
+    private void init(Context context) {
+        mScroller = new Scroller(context);
+        this.context = context;
+
     }
 
     /**
@@ -109,6 +108,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     boolean thisTouchHadDeal = false;
     private int startX, nowTouchX, startY, nowTouchY;
 
+    private SwipeMenuLayout newSwipeMenuLayout, oldSwipeMenuLayout;
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
         Log.d(TAG, "onInterceptTouchEvent.. isVerticalScroll = " + isVerticalScroll);
@@ -119,7 +119,14 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
                 thisTouchHadDeal = false;
                 startX = (int) ev.getX();
                 startY = (int) ev.getY();
-                Log.w(TAG, "ACTION_DOWN..  p1X = " + startX + "  ,p1Y = " + startY);
+
+                int touchingPosition = getChildAdapterPosition(findChildViewUnder(startX, startY));
+                ViewHolder viewHolder = (ViewHolder) findViewHolderForAdapterPosition(touchingPosition);
+
+                newSwipeMenuLayout = (SwipeMenuLayout) viewHolder.itemView;
+                if (oldSwipeMenuLayout != null && oldSwipeMenuLayout.getScrollX() != 0)//上一次被弹出的菜单回滚回原位
+                    oldSwipeMenuLayout.smoothCloseMenu();
+                oldSwipeMenuLayout = newSwipeMenuLayout;
                 break;
             case MotionEvent.ACTION_MOVE:
                 Log.v(TAG, "ACTION_MOVE.. isVerticalScroll = " + isVerticalScroll);
@@ -143,6 +150,21 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
         }
 
         return super.onInterceptTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent e) {
+        switch (e.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                Log.d(TAG, "onTouchEvent  ACTION_DOWN");
+
+                break;
+            case MotionEvent.ACTION_MOVE:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return super.onTouchEvent(e);
     }
 
     /**

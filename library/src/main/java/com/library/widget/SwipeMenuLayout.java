@@ -131,7 +131,7 @@ public class SwipeMenuLayout extends FrameLayout {
         smoothScrollTo(menuView.getWidth(),0);
     }
 
-    private void smoothCloseMenu() {
+    public void smoothCloseMenu() {
         smoothScrollTo(0,0);
     }
 

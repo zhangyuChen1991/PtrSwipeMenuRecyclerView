@@ -19,16 +19,18 @@ public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
     private LinearLayout menuView;
     private View contentView;
     public static final int HeaderType = 0x1099, FooterType = 0x1101;
+    private HeaderView headerView;
+    private FooterView footerView;
 
     public class HeaderViewHolder extends RecyclerView.ViewHolder{
-        public HeaderView headerView;
+
         public HeaderViewHolder(View itemView) {
             super(itemView);
             headerView = (HeaderView) itemView;
         }
     }
     public class FooterViewHolder extends RecyclerView.ViewHolder{
-        public FooterView footerView;
+
         public FooterViewHolder(View itemView) {
             super(itemView);
             footerView = (FooterView) itemView;
@@ -101,6 +103,23 @@ public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
         if (position == getThisItemCount() + 1)
             return FooterType;
         return super.getItemViewType(position - 1);//减1去掉herder的位置
+    }
+
+
+    /**
+     * 获取HeaderView
+     * @return
+     */
+    public HeaderView getHeaderView() {
+        return headerView;
+    }
+
+    /**
+     * 获取FooterView
+     * @return
+     */
+    public FooterView getFooterView() {
+        return footerView;
     }
 
 }
