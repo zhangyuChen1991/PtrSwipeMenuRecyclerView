@@ -15,6 +15,7 @@ import android.widget.TextView;
 public class FooterView extends RelativeLayout {
     private static final String TAG = "FooterView";
     private Context context;
+    private RelativeLayout container;
     public TextView hintText;
     private ProgressBar progressBar;
 
@@ -42,6 +43,7 @@ public class FooterView extends RelativeLayout {
     private void init(Context context, AttributeSet attrs) {
         this.context = context;
         View.inflate(context, R.layout.pull_to_refresh_footer,this);
+        container = (RelativeLayout) findViewById(R.id.footer_container);
         hintText = (TextView) findViewById(R.id.ptrf_tv);
         progressBar = (ProgressBar) findViewById(R.id.ptrf_progress_bar);
     }
@@ -55,17 +57,17 @@ public class FooterView extends RelativeLayout {
     private void refreshView() {
         switch (nowState){
             case LOADING:
-                setVisibility(View.VISIBLE);
+                container.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(INVISIBLE);
                 hintText.setText("正在加载..");
                 break;
             case READY:
-                setVisibility(View.VISIBLE);
+                container.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(INVISIBLE);
                 hintText.setText("上拉加载更多");
                 break;
             case HIND:
-                setVisibility(View.GONE);
+                container.setVisibility(View.GONE);
                 break;
         }
     }

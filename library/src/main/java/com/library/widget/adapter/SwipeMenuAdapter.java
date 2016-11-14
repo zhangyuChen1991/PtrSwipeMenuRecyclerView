@@ -9,40 +9,41 @@ import android.widget.LinearLayout;
 
 import com.library.widget.FooterView;
 import com.library.widget.HeaderView;
+import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.SwipeMenuLayout;
 
 /**
  * Created by zhangyu on 2016/11/9.
  */
-public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
+public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHolder> extends RecyclerView.Adapter {
     private static final String TAG = "SwipeMenuAdapter";
     private LinearLayout menuView;
     private View contentView;
     public static final int HeaderType = 0x1099, FooterType = 0x1101;
-    private HeaderView headerView;
-    private FooterView footerView;
+    private HeaderFooterViewHolder headerViewHolder, footerViewHolder;
+    private boolean footerViewEnable = true;
 
-    public class HeaderViewHolder extends RecyclerView.ViewHolder{
-
-        public HeaderViewHolder(View itemView) {
+    public class HeaderFooterViewHolder extends RecyclerView.ViewHolder {
+        public HeaderFooterViewHolder(View itemView) {
             super(itemView);
-            headerView = (HeaderView) itemView;
         }
     }
-    public class FooterViewHolder extends RecyclerView.ViewHolder{
 
-        public FooterViewHolder(View itemView) {
-            super(itemView);
-            footerView = (FooterView) itemView;
-        }
-    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG, "onCreateViewHolder..");
-        if(viewType == HeaderType)
-            return new HeaderViewHolder(new HeaderView(parent.getContext()));
-        if(viewType == FooterType)
-            return new FooterViewHolder(new FooterView(parent.getContext()));
+        Log.d(TAG, "onCreateViewHolder.. viewType = " + viewType + "  HT:" + HeaderType + "  FT:" + FooterType);
+        if (viewType == HeaderType) {
+            headerViewHolder = new HeaderFooterViewHolder(new HeaderView(parent.getContext()));
+            return headerViewHolder;
+        }
+        if (viewType == FooterType) {
+            footerViewHolder = new HeaderFooterViewHolder(new FooterView(parent.getContext()));
+            if(!footerViewEnable) { //不允许上拉加载更多，隐藏FooterView
+                FooterView footerView = (FooterView) footerViewHolder.itemView;
+                footerView.setNowState(FooterView.STATE.HIND);
+            }
+            return footerViewHolder;
+        }
 
         menuView = createMenuView(parent, viewType);
         contentView = createContentView(parent, viewType);
@@ -76,23 +77,30 @@ public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
     public abstract RecyclerView.ViewHolder onCreateThisViewHolder(ViewGroup contentView, int viewType);
 
     @Override
-    public abstract void onBindViewHolder(RecyclerView.ViewHolder holder, int position);
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        if (position != 0 && position != getItemCount() - 1)
+            onBindThisViewHolder((V) holder, position);
+    }
+
+    public abstract void onBindThisViewHolder(V holder, int position);
 
     @Override
-    public int getItemCount(){
+    public int getItemCount() {
         //添加Header和Footer的数目
         return getThisItemCount() + 2;
     }
 
     /**
      * 此方法执行RecyclerView.Adapter中getItemCount()的逻辑
+     *
      * @return
      */
     public abstract int getThisItemCount();
 
     /**
-     * 重写此方法时请注意保留父类的方法，否则导致header计数混乱，下拉刷新出错
+     * 重写此方法时请注意保留父类方法的逻辑，否则导致header计数混乱，下拉刷新出错
      * 使用position时注意减1(减去header的位置)
+     *
      * @param position
      * @return
      */
@@ -108,18 +116,26 @@ public abstract class SwipeMenuAdapter extends RecyclerView.Adapter {
 
     /**
      * 获取HeaderView
+     *
      * @return
      */
     public HeaderView getHeaderView() {
-        return headerView;
+        return (HeaderView) headerViewHolder.itemView;
     }
 
     /**
      * 获取FooterView
+     *
      * @return
      */
     public FooterView getFooterView() {
-        return footerView;
+        if (null == footerViewHolder)
+            return null;
+        return (FooterView) footerViewHolder.itemView;
+    }
+
+    public void setFooterViewEnable(boolean enable) {
+        this.footerViewEnable = enable;
     }
 
 }

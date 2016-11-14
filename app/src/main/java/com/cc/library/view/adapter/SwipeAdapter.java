@@ -5,22 +5,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.cc.library.view.R;
 import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.adapter.SwipeMenuAdapter;
 
+import java.util.List;
+
 /**
  * Created by zhangyu on 2016/11/9.
  */
-public class SwipeAdapter extends SwipeMenuAdapter {
+public class SwipeAdapter extends SwipeMenuAdapter<SwipeAdapter.ViewHolder> {
+    public List<Integer> datas;
 
-    public class ViewHolder extends PtrSwipeMenuRecyclerView.ViewHolder{
+    public class ViewHolder extends PtrSwipeMenuRecyclerView.ViewHolder {
+        public TextView tv;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            tv = (TextView) itemView.findViewById(R.id.content_tv);
         }
     }
+
     @Override
     protected View createContentView(ViewGroup parent, int viewType) {
         View contentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.content_view_for_test, parent, false);
@@ -39,13 +46,19 @@ public class SwipeAdapter extends SwipeMenuAdapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
+    public void onBindThisViewHolder(ViewHolder holder, int position) {
+        int realPosition = position - 1;
+        if (null != datas && realPosition < datas.size())
+            holder.tv.setText("content " + datas.get(realPosition));
     }
+
 
     @Override
     public int getThisItemCount() {
-        return 17;
+        return datas == null ? 0 : datas.size();
     }
 
+    public void setDatas(List<Integer> datas) {
+        this.datas = datas;
+    }
 }
