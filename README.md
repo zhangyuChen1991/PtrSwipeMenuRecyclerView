@@ -6,14 +6,14 @@
 
 侧滑菜单效果：
 
-![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/swipemenu.png)
+![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/swipemenu.jpg)
 
 下拉刷新效果：
 
-![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/refreshing.png)
+![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/refreshing.jpg)
 
 上拉加载效果:
 
-![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/loadmore.png)
+![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/loadmore.jpg)
 
 注：项目功能为初步实现，仍在改进中。欢迎提出意见，共同讨论共同进步！
