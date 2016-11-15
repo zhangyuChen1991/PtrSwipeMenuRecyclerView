@@ -7,9 +7,11 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.library.widget.adapter.SwipeMenuAdapter;
@@ -40,7 +42,6 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     private OnPullListener onPullListener;
 
     private static OnMenuClickListener onMenuClickListener;
-    private ViewConfiguration mViewConfig;
 
     public PtrSwipeMenuRecyclerView(Context context) {
         super(context);
@@ -73,9 +74,27 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
 
 
     private void init(Context context) {
-        mViewConfig = ViewConfiguration.get(context);
         this.context = context;
 
+
+    }
+
+    /**
+     * 监听滚动
+     * @param dx
+     * @param dy
+     */
+    @Override
+    public void onScrolled(int dx, int dy) {
+        super.onScrolled(dx, dy);
+        if (!canScrollVertically(1)) {//已经滑到底部
+
+            if (loading || !pullLoadMoreEnable)
+                super.onScrolled(dx,dy);
+            else{
+                startLoadMore();//自动加载
+            }
+        }
     }
 
     /**
@@ -179,17 +198,17 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
                     }
                 }
 
-                if (!canScrollVertically(1)) {//已经滑到底部
-
-                    if (loading || !pullLoadMoreEnable)
-                        return super.onTouchEvent(e);
-
-                    float distanceY = touchCurrY - startY;
-                    if (distanceY < 0) {
-                        startLoadMore();
-                        return true;
-                    }
-                }
+//                if (!canScrollVertically(1)) {//已经滑到底部
+//
+//                    if (loading || !pullLoadMoreEnable)
+//                        return super.onTouchEvent(e);
+//
+//                    float distanceY = touchCurrY - startY;
+//                    if (distanceY < 0) {
+//                        startLoadMore();
+//                        return true;
+//                    }
+//                }
                 break;
             case MotionEvent.ACTION_UP:
                 if (!refreshing) {
@@ -226,6 +245,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             scrollToReadyAndRefresh();
         }
     }
+
 
     /**
      * 回滚到刷新状态的位置并开始刷新
@@ -363,7 +383,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     public void setPullLoadMoreEnable(boolean enable) {
         this.pullLoadMoreEnable = enable;
 
-        if(null != adapter && !enable)
+        if (null != adapter && !enable)
             adapter.setFooterViewEnable(false);
     }
 
