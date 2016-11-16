@@ -48,24 +48,24 @@ public class SwipeMenuLayout extends FrameLayout {
         mScroller = new Scroller(context);
 
 
-
         LayoutParams contentParams = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
-        contentView.setLayoutParams(contentParams);
-        menuView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-
+        if (null != contentView) {
+            addView(contentView);
+            contentView.setLayoutParams(contentParams);
+        }
+        if (null != menuView) {
+            addView(menuView);
+            menuView.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        }
         setLayoutParams(contentParams);
 
-        if (null != contentView)
-            addView(contentView);
-        if (null != menuView)
-            addView(menuView);
 
         Log.d(TAG, "init.. contentView.getWidth() = " + contentView.getWidth() + "contentView.getHeight() = " + contentView.getHeight());
         Log.d(TAG, "init.. menuView.getWidth() = " + menuView.getWidth() + "menuView.getHeight() = " + menuView.getHeight());
     }
 
-    private float preTouchX,preTouchY;
-    private float nowTouchX,nowTouchY;
+    private float preTouchX, preTouchY;
+    private float nowTouchX, nowTouchY;
 
 
     @Override
@@ -88,19 +88,19 @@ public class SwipeMenuLayout extends FrameLayout {
 
                     //当从0点往左滑动时，currx为整数，滑得越远，数越大
                     int currX = mScroller.getCurrX();
-                    Log.v(TAG, "currX = " + currX + "  ,menuView.getWidth() = "+menuView.getWidth());
+                    Log.v(TAG, "currX = " + currX + "  ,menuView.getWidth() = " + menuView.getWidth());
                     float distanceX = nowTouchX - preTouchX;
                     if (currX < menuView.getWidth() && currX > 0) {//菜单已被拉出，往左右都可滑
                         return doScroll(distanceX);
                     }
 
                     //菜单已被完全拉出，往右可滑
-                    if(currX >= menuView.getWidth() && distanceX > 0){
+                    if (currX >= menuView.getWidth() && distanceX > 0) {
                         return doScroll(distanceX);
                     }
 
                     //菜单未被拉出，往左可滑
-                    if(currX <= 0 && distanceX < 0) {
+                    if (currX <= 0 && distanceX < 0) {
                         return doScroll(distanceX);
                     }
 
@@ -109,7 +109,7 @@ public class SwipeMenuLayout extends FrameLayout {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.i(TAG,"ACTION_UP..");
+                Log.i(TAG, "ACTION_UP..");
                 startAutoScroll();
                 break;
         }
@@ -120,19 +120,19 @@ public class SwipeMenuLayout extends FrameLayout {
     private void startAutoScroll() {
         int scrollX = getScrollX();
         Log.i(TAG, "startAutoScroll..scrollX = " + scrollX);
-        if(scrollX >= menuView.getWidth()*0.5){
+        if (scrollX >= menuView.getWidth() * 0.5) {
             smoothOpenMenu();
-        }else{
+        } else {
             smoothCloseMenu();
         }
     }
 
     private void smoothOpenMenu() {
-        smoothScrollTo(menuView.getWidth(),0);
+        smoothScrollTo(menuView.getWidth(), 0);
     }
 
     public void smoothCloseMenu() {
-        smoothScrollTo(0,0);
+        smoothScrollTo(0, 0);
     }
 
     private boolean doScroll(float distanceX) {
@@ -172,6 +172,7 @@ public class SwipeMenuLayout extends FrameLayout {
 
     /**
      * 获取menuView
+     *
      * @return
      */
     public LinearLayout getMenuView() {

@@ -61,7 +61,7 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
     protected abstract View createContentView(ViewGroup parent, int viewType);
 
     /**
-     * 创建菜单view的布局
+     * 创建菜单view的布局(高度最好与contentView布局高度一致，否则可能引起布局混乱)
      *
      * @return
      */
