@@ -84,24 +84,26 @@ public class SwipeMenuLayout extends FrameLayout {
                     nowTouchX = event.getX();
                     nowTouchY = event.getY();
 
-                    if (null != menuView) {
-                        //当从0点往左滑动时，currx为整数，滑得越远，数越大
-                        int currX = mScroller.getCurrX();
-                        float distanceX = nowTouchX - preTouchX;
-                        if (currX < menuView.getWidth() && currX > 0) {//菜单已被拉出，往左右都可滑
-                            return doScroll(distanceX);
-                        }
+                    if (null == menuView)
+                        return super.onTouchEvent(event);
 
-                        //菜单已被完全拉出，往右可滑
-                        if (currX >= menuView.getWidth() && distanceX > 0) {
-                            return doScroll(distanceX);
-                        }
-
-                        //菜单未被拉出，往左可滑
-                        if (currX <= 0 && distanceX < 0) {
-                            return doScroll(distanceX);
-                        }
+                    //当从0点往左滑动时，currx为整数，滑得越远，数越大
+                    int currX = mScroller.getCurrX();
+                    float distanceX = nowTouchX - preTouchX;
+                    if (currX < menuView.getWidth() && currX > 0) {//菜单已被拉出，往左右都可滑
+                        return doScroll(distanceX);
                     }
+
+                    //菜单已被完全拉出，往右可滑
+                    if (currX >= menuView.getWidth() && distanceX > 0) {
+                        return doScroll(distanceX);
+                    }
+
+                    //菜单未被拉出，往左可滑
+                    if (currX <= 0 && distanceX < 0) {
+                        return doScroll(distanceX);
+                    }
+
                     preTouchX = nowTouchX;
                     preTouchY = nowTouchY;
                 }
