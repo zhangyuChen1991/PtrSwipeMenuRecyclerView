@@ -6,7 +6,7 @@
 
 侧滑菜单效果：
 
-![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/swipemenu.jpg)
+![image](http://a3.qpic.cn/psb?/V10yyRFZ1AvSi9/m5Sq3qOO*OzfaxeZnuBnYoSdo1beouWb9rclV0qGJiU!/m/dNoAAAAAAAAAnull&bo=CQH0AQAAAAACB94!&rf=photolist&t=5)
 
 下拉刷新效果：
 
