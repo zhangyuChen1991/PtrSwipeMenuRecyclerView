@@ -7,6 +7,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,7 +60,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     }
 
     @Override
-    public void setAdapter(Adapter adapter) {
+    public void setAdapter(Adapter adapter){
         super.setAdapter(adapter);
         if (adapter instanceof SwipeMenuAdapter) {
             this.adapter = (SwipeMenuAdapter<ViewHolder>) adapter;
@@ -67,6 +68,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             try {
                 throw new InvalidClassException("所使用Adapter并非SwipeMenuAdapter的子类");
             } catch (InvalidClassException e) {
+                Log.e(TAG,e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -81,6 +83,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
 
     /**
      * 监听滚动
+     *
      * @param dx
      * @param dy
      */
@@ -90,8 +93,8 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
         if (!canScrollVertically(1)) {//已经滑到底部
 
             if (loading || !pullLoadMoreEnable)
-                super.onScrolled(dx,dy);
-            else{
+                super.onScrolled(dx, dy);
+            else {
                 startLoadMore();//自动加载
             }
         }
@@ -185,8 +188,9 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
                 break;
             case MotionEvent.ACTION_MOVE:
 
-                //TODO 理论上应该computeVerticalScrollOffset == 0 但是可能因为隐藏header的缘故，死活是150，改变header的初始高度也不影响这个值，why??
-                if (computeVerticalScrollOffset() <= 150) {//recyclerviwe已滑动到顶部
+                Log.d(TAG, "computeVerticalScrollOffset() = " + computeVerticalScrollOffset());
+                //理论上应该computeVerticalScrollOffset == 0 但是因为隐藏header的缘故，这里的判断距离增加一个item的高度
+                if (getChildAt(1) != null && computeVerticalScrollOffset() <= getChildAt(1).getHeight()) {//recyclerviwe已滑动到顶部
                     if (refreshing || !pullToRefreshEnable)
                         return super.onTouchEvent(e);
                     touchCurrY = e.getY();
