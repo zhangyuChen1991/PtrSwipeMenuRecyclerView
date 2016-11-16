@@ -16,4 +16,5 @@
 
 ![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/loadmore.jpg)
 
+另，项目中也利用ItemTouchHelper简单实现了对item的拖拽操作，长按可拖拽移动item
 注：项目功能为初步实现，仍在改进中。欢迎提出意见，共同讨论共同进步！

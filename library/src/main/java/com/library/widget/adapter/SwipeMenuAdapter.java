@@ -62,6 +62,7 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
 
     /**
      * 创建菜单view的布局(高度最好与contentView布局高度一致，否则可能引起布局混乱)
+     * 如果不需要侧滑菜单，返回null
      *
      * @return
      */

@@ -280,7 +280,8 @@
     <!-- 中春绿色 -->
     <color name="darkturquoise">#00CED1</color>
     <!-- 暗宝石绿 -->
-    <color name="deepskyblue">#00BFFF</color>
+    <color name="deepskyblue">#8700BFFF</color>
+    <color name="deepskyblue_pressed">#00BFFF</color>
     <!-- 深天蓝色 -->
     <color name="darkcyan">#008B8B</color>
     <!-- 暗青色 -->

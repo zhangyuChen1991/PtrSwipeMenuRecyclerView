@@ -60,7 +60,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     }
 
     @Override
-    public void setAdapter(Adapter adapter){
+    public void setAdapter(Adapter adapter) {
         super.setAdapter(adapter);
         if (adapter instanceof SwipeMenuAdapter) {
             this.adapter = (SwipeMenuAdapter<ViewHolder>) adapter;
@@ -68,7 +68,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             try {
                 throw new InvalidClassException("所使用Adapter并非SwipeMenuAdapter的子类");
             } catch (InvalidClassException e) {
-                Log.e(TAG,e.getMessage());
+                Log.e(TAG, e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -116,9 +116,10 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
         }
 
         private void setOnMenuClickListener() {
-            for (int i = 0; i < menuView.getChildCount(); i++) {
-                menuView.getChildAt(i).setOnClickListener(onClickListener);
-            }
+            if (null != menuView)
+                for (int i = 0; i < menuView.getChildCount(); i++) {
+                    menuView.getChildAt(i).setOnClickListener(onClickListener);
+                }
 
         }
 

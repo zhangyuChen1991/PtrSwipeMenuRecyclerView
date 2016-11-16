@@ -4,6 +4,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -13,6 +15,8 @@ import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.interfaces.OnMenuClickListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity{
@@ -49,8 +53,50 @@ public class MainActivity extends AppCompatActivity{
         //添加菜单点击监听事件
         recyclerView.setOnMenuClickListener(onMenuClickListener);
         recyclerView.setOnPullListener(onPullListener);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
+
+    private ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            final int dragFlag = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
+            return makeMovementFlags(dragFlag,0);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+
+            int from = viewHolder.getAdapterPosition();
+            int to = target.getAdapterPosition();
+            Collections.swap(datas,from,to);
+
+            swipeAdapter.notifyItemMoved(from,to);
+            return true;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+
+        }
+
+        @Override
+        public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+            SwipeAdapter.ViewHolder holder = (SwipeAdapter.ViewHolder) viewHolder;
+            //被选中时，改背景色
+            if(actionState != ItemTouchHelper.ACTION_STATE_IDLE){
+                holder.tv.setBackgroundColor(getResources().getColor(R.color.deepskyblue_pressed));
+            }
+            super.onSelectedChanged(viewHolder, actionState);
+        }
+
+        @Override
+        public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            super.clearView(recyclerView, viewHolder);
+            SwipeAdapter.ViewHolder holder = (SwipeAdapter.ViewHolder) viewHolder;
+            holder.tv.setBackgroundColor(getResources().getColor(R.color.deepskyblue));
+        }
+    });
 
     /**
      * 菜单点击事件监听
