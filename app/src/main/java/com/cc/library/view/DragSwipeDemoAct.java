@@ -1,5 +1,6 @@
 package com.cc.library.view;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
-import android.widget.LinearLayout;
 
 import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
@@ -15,21 +15,28 @@ import com.library.widget.PtrSwipeMenuRecyclerView;
 import com.library.widget.interfaces.OnMenuClickListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+/**
+ * Created by zhangyu on 2016/11/17.
+ */
+
+public class DragSwipeDemoAct extends AppCompatActivity {
     private PtrSwipeMenuRecyclerView recyclerView;
     private SwipeAdapter swipeAdapter;
     public List<Integer> datas;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_swipe_demo);
         initResources();
         initView();
+    }
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return super.onSupportNavigateUp();
     }
 
     private void initResources() {
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void initView() {
+        initActionBar();
+
         recyclerView = (PtrSwipeMenuRecyclerView) findViewById(R.id.recycler_view);
         //参数：context,横向或纵向滑动，是否颠倒显示数据
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -49,7 +58,7 @@ public class MainActivity extends AppCompatActivity{
 //        //设置不允许上拉加载更多
 //        recyclerView.setPullLoadMoreEnable(false);
 //        //设置不允许下拉刷新
-//        recyclerView.setPullToRefreshEnable(false);
+        recyclerView.setPullToRefreshEnable(false);
         //添加菜单点击监听事件
         recyclerView.setOnMenuClickListener(onMenuClickListener);
         recyclerView.setOnPullListener(onPullListener);
@@ -57,6 +66,46 @@ public class MainActivity extends AppCompatActivity{
 
     }
 
+    private void initActionBar() {
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+    }
+
+
+
+    /**
+     * 菜单点击事件监听
+     */
+    private OnMenuClickListener onMenuClickListener = new OnMenuClickListener() {
+        @Override
+        public void onMenuClick(View view, int position) {
+            if (view.getId() == R.id.menu1)
+                ToastUtil.showToast("position:" + position + "menu1", 0);
+            if (view.getId() == R.id.menu2)
+                ToastUtil.showToast("position:" + position + "menu2", 0);
+        }
+    };
+
+    /**
+     * 上拉加载、下拉刷新监听
+     */
+    private PtrSwipeMenuRecyclerView.OnPullListener onPullListener = new PtrSwipeMenuRecyclerView.OnPullListener() {
+        @Override
+        public void onRefresh() {
+            new GetDataTask().execute();
+        }
+
+        @Override
+        public void onLoadMore() {
+            new LoadMoreTask().execute();
+        }
+    };
+
+
+    /**
+     * 使用itemTouchHelper完成拖拽效果
+     * 由于拖拽与下拉刷新有冲突，所以暂时不建议放在一起使用
+     */
     private ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
@@ -97,34 +146,6 @@ public class MainActivity extends AppCompatActivity{
             holder.tv.setBackgroundColor(getResources().getColor(R.color.deepskyblue));
         }
     });
-
-    /**
-     * 菜单点击事件监听
-     */
-    private OnMenuClickListener onMenuClickListener = new OnMenuClickListener() {
-        @Override
-        public void onMenuClick(View view, int position) {
-            if (view.getId() == R.id.menu1)
-                ToastUtil.showToast("position:" + position + "menu1", 0);
-            if (view.getId() == R.id.menu2)
-                ToastUtil.showToast("position:" + position + "menu2", 0);
-        }
-    };
-
-    /**
-     * 上拉加载、下拉刷新监听
-     */
-    private PtrSwipeMenuRecyclerView.OnPullListener onPullListener = new PtrSwipeMenuRecyclerView.OnPullListener() {
-        @Override
-        public void onRefresh() {
-            new GetDataTask().execute();
-        }
-
-        @Override
-        public void onLoadMore() {
-            new LoadMoreTask().execute();
-        }
-    };
 
     private class GetDataTask extends AsyncTask<Void, Void, String[]> {
 
