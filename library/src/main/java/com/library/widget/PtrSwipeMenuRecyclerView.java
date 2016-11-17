@@ -128,6 +128,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
             public void onClick(View view) {
                 for (int i = 0; i < menuView.getChildCount(); i++) {
                     if (view.getId() == menuView.getChildAt(i).getId()) {
+                        swipeMenuLayout.smoothCloseMenu();
                         if (null != onMenuClickListener) {
                             onMenuClickListener.onMenuClick(view, getAdapterPosition() - 1);//触发菜单点击事件，减去header的位置
                         }
@@ -138,7 +139,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
     }
 
     boolean thisTouchHadDeal = false;
-    private int startX, nowTouchX, startY, nowTouchY;
+    private int startX, nowTouchX, startY, nowTouchY,oldTouchPosition = -1;
     private SwipeMenuLayout newSwipeMenuLayout, oldSwipeMenuLayout;
 
     @Override
@@ -156,10 +157,11 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
                     ViewHolder viewHolder = (ViewHolder) findViewHolderForAdapterPosition(touchingPosition);
 
                     newSwipeMenuLayout = (SwipeMenuLayout) viewHolder.itemView;
-                    if (oldSwipeMenuLayout != null && oldSwipeMenuLayout.getScrollX() != 0)//上一次被弹出的菜单回滚回原位
+                    if (touchingPosition != oldTouchPosition && oldSwipeMenuLayout != null && oldSwipeMenuLayout.getScrollX() != 0)//上一次被弹出的菜单回滚回原位
                         oldSwipeMenuLayout.smoothCloseMenu();
                     oldSwipeMenuLayout = newSwipeMenuLayout;
                 }
+                oldTouchPosition = touchingPosition;
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!thisTouchHadDeal) {
