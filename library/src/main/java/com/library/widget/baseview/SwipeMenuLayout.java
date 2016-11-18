@@ -1,4 +1,4 @@
-package com.library.widget;
+package com.library.widget.baseview;
 
 import android.content.Context;
 import android.util.AttributeSet;

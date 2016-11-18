@@ -9,9 +9,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
 import com.cc.library.view.adapter.DragSwipeAdapter;
-import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
-import com.library.widget.PtrSwipeMenuRecyclerView;
+import com.library.widget.baseview.PtrSwipeMenuRecyclerView;
 import com.library.widget.interfaces.OnMenuClickListener;
 
 import java.util.ArrayList;
@@ -171,7 +170,6 @@ public class DragSwipeDemoAct extends AppCompatActivity {
 
         @Override
         protected String[] doInBackground(Void... params) {
-            // Simulates a background job.
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {

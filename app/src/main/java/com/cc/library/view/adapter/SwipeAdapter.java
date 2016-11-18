@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.cc.library.view.R;
-import com.library.widget.PtrSwipeMenuRecyclerView;
+import com.library.widget.baseview.PtrSwipeMenuRecyclerView;
 import com.library.widget.adapter.SwipeMenuAdapter;
 
 import java.util.List;

@@ -1,25 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/footer_container"
+    android:id="@+id/mfv_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:background="@color/black">
 
     <ProgressBar
-        android:id="@+id/ptrf_progress_bar"
+        android:id="@+id/mfv_progress_bar"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/ptrf_tv"
+        android:layout_toLeftOf="@+id/mfv_tv"
         android:layout_marginRight="15dp"
         android:visibility="invisible"
         />
 
     <TextView
-        android:id="@+id/ptrf_tv"
+        android:id="@+id/mfv_tv"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
         android:layout_centerInParent="true"
+        android:textColor="@color/white"
         android:textSize="13sp"
         android:gravity="center"
         android:text="上拉加载更多"/>

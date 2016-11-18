@@ -7,9 +7,9 @@
     android:orientation="vertical"
     tools:context="com.cc.library.view.PtrSwipeDemoAct">
 
-    <com.library.widget.PtrSwipeMenuRecyclerView
+    <com.library.widget.baseview.PtrSwipeMenuRecyclerView
         android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></com.library.widget.PtrSwipeMenuRecyclerView>
+        android:layout_height="wrap_content"></com.library.widget.baseview.PtrSwipeMenuRecyclerView>
 
 </LinearLayout>

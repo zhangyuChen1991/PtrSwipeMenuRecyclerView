@@ -1,24 +1,32 @@
 package com.cc.library.view;
 
-import android.app.ActionBar;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
-import com.library.widget.PtrSwipeMenuRecyclerView;
+import com.cc.library.view.widget.MFooterView;
+import com.cc.library.view.widget.MHeaderView;
+import com.library.widget.baseview.FooterView;
+import com.library.widget.baseview.HeaderView;
+import com.library.widget.baseview.PtrSwipeMenuRecyclerView;
 import com.library.widget.interfaces.OnMenuClickListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PtrSwipeDemoAct extends AppCompatActivity{
+public class PtrSwipeDemoAct extends AppCompatActivity {
     private PtrSwipeMenuRecyclerView recyclerView;
     private SwipeAdapter swipeAdapter;
     public List<Integer> datas;
+    private MHeaderView mHeaderView;
+    private MFooterView mFooterView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +44,19 @@ public class PtrSwipeDemoAct extends AppCompatActivity{
     }
 
     private void initResources() {
+        mHeaderView = new MHeaderView(this);
+        mFooterView = new MFooterView(this);
+        initAdapter(null, null);
+    }
+
+    private void initAdapter(HeaderView headerView, FooterView footerView) {
         swipeAdapter = new SwipeAdapter();
+
+        //不设置Header和Footer则会使用默认的布局
+        if (headerView != null)
+            swipeAdapter.setHeaderView(headerView);
+        if (footerView != null)
+            swipeAdapter.setFooterView(footerView);
         datas = new ArrayList<>();
         for (int i = 0; i < 17; i++) {
             datas.add(i);
@@ -117,7 +137,6 @@ public class PtrSwipeDemoAct extends AppCompatActivity{
 
         @Override
         protected String[] doInBackground(Void... params) {
-            // Simulates a background job.
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
@@ -136,5 +155,25 @@ public class PtrSwipeDemoAct extends AppCompatActivity{
             recyclerView.onLoadMoreComplete();
             super.onPostExecute(result);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.prt_act_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        switch (itemId) {
+            case R.id.change_header_footer:
+                initAdapter(mHeaderView, mFooterView);//重置adapter，改变header和footer
+                recyclerView.setAdapter(swipeAdapter);
+                ToastUtil.showToast("Header&Footer已改变", 0);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

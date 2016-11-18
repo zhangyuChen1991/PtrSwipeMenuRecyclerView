@@ -1,16 +1,17 @@
 package com.library.widget.adapter;
 
-import android.nfc.Tag;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import com.library.widget.FooterView;
-import com.library.widget.HeaderView;
-import com.library.widget.PtrSwipeMenuRecyclerView;
-import com.library.widget.SwipeMenuLayout;
+import com.library.widget.defaultimple.DefaultFooterView;
+import com.library.widget.defaultimple.DefaultHeaderView;
+import com.library.widget.baseview.FooterView;
+import com.library.widget.baseview.HeaderView;
+import com.library.widget.baseview.PtrSwipeMenuRecyclerView;
+import com.library.widget.baseview.SwipeMenuLayout;
 
 /**
  * Created by zhangyu on 2016/11/9.
@@ -19,6 +20,11 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
     private static final String TAG = "SwipeMenuAdapter";
     private LinearLayout menuView;
     private View contentView;
+
+
+    private HeaderView headerView;
+
+    private FooterView footerView;
     public static final int HeaderType = 0x1099, FooterType = 0x1101;
     private HeaderFooterViewHolder headerViewHolder, footerViewHolder;
     private boolean footerViewEnable = true;
@@ -33,11 +39,13 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
     public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder.. viewType = " + viewType + "  HT:" + HeaderType + "  FT:" + FooterType);
         if (viewType == HeaderType) {
-            headerViewHolder = new HeaderFooterViewHolder(new HeaderView(parent.getContext()));
+            headerView = headerView == null ? new DefaultHeaderView(parent.getContext()) : headerView;
+            headerViewHolder = new HeaderFooterViewHolder(headerView);
             return headerViewHolder;
         }
         if (viewType == FooterType) {
-            footerViewHolder = new HeaderFooterViewHolder(new FooterView(parent.getContext()));
+            footerView = footerView == null ? new DefaultFooterView(parent.getContext()) : footerView;
+            footerViewHolder = new HeaderFooterViewHolder(footerView);
             if(!footerViewEnable) { //不允许上拉加载更多，隐藏FooterView
                 FooterView footerView = (FooterView) footerViewHolder.itemView;
                 footerView.setNowState(FooterView.STATE.HIND);
@@ -143,6 +151,25 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
         if (null == footerViewHolder)
             return null;
         return (FooterView) footerViewHolder.itemView;
+    }
+
+    /**
+     * 设置HeaderView
+     *
+     * @return
+     */
+    public void setHeaderView(HeaderView headerView) {
+        this.headerView = headerView;
+        notifyDataSetChanged();
+    }
+
+    /**
+     * 设置FooterView
+     *
+     * @return
+     */
+    public void setFooterView(FooterView footerView) {
+        this.footerView = footerView;
     }
 
     public void setFooterViewEnable(boolean enable) {
