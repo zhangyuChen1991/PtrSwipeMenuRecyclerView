@@ -78,6 +78,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         this.recyclerViewOnClick = recyclerViewOnClick;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
+
     /**
      * 监听回调接口
      */

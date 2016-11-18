@@ -1,6 +1,5 @@
 package com.cc.library.view;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
+import com.cc.library.view.adapter.DragSwipeAdapter;
 import com.cc.library.view.adapter.SwipeAdapter;
 import com.cc.library.view.util.ToastUtil;
 import com.library.widget.PtrSwipeMenuRecyclerView;
@@ -24,8 +24,9 @@ import java.util.List;
 
 public class DragSwipeDemoAct extends AppCompatActivity {
     private PtrSwipeMenuRecyclerView recyclerView;
-    private SwipeAdapter swipeAdapter;
+    private DragSwipeAdapter adapter;
     public List<Integer> datas;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +34,7 @@ public class DragSwipeDemoAct extends AppCompatActivity {
         initResources();
         initView();
     }
+
     @Override
     public boolean onSupportNavigateUp() {
         finish();
@@ -40,12 +42,12 @@ public class DragSwipeDemoAct extends AppCompatActivity {
     }
 
     private void initResources() {
-        swipeAdapter = new SwipeAdapter();
+        adapter = new DragSwipeAdapter();
         datas = new ArrayList<>();
         for (int i = 0; i < 17; i++) {
             datas.add(i);
         }
-        swipeAdapter.setDatas(datas);
+        adapter.setDatas(datas);
     }
 
     private void initView() {
@@ -54,7 +56,7 @@ public class DragSwipeDemoAct extends AppCompatActivity {
         recyclerView = (PtrSwipeMenuRecyclerView) findViewById(R.id.recycler_view);
         //参数：context,横向或纵向滑动，是否颠倒显示数据
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerView.setAdapter(swipeAdapter);
+        recyclerView.setAdapter(adapter);
 //        //设置不允许上拉加载更多
 //        recyclerView.setPullLoadMoreEnable(false);
 //        //设置不允许下拉刷新
@@ -72,7 +74,6 @@ public class DragSwipeDemoAct extends AppCompatActivity {
     }
 
 
-
     /**
      * 菜单点击事件监听
      */
@@ -80,9 +81,9 @@ public class DragSwipeDemoAct extends AppCompatActivity {
         @Override
         public void onMenuClick(View view, int position) {
             if (view.getId() == R.id.menu1)
-                ToastUtil.showToast("position:" + position + "menu1", 0);
+                ToastUtil.showToast("position:" + position + ",menu1", 0);
             if (view.getId() == R.id.menu2)
-                ToastUtil.showToast("position:" + position + "menu2", 0);
+                ToastUtil.showToast("position:" + position + ",menu2", 0);
         }
     };
 
@@ -110,7 +111,7 @@ public class DragSwipeDemoAct extends AppCompatActivity {
         @Override
         public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             final int dragFlag = ItemTouchHelper.UP | ItemTouchHelper.DOWN;
-            return makeMovementFlags(dragFlag,0);
+            return makeMovementFlags(dragFlag, 0);
         }
 
         @Override
@@ -118,9 +119,10 @@ public class DragSwipeDemoAct extends AppCompatActivity {
 
             int from = viewHolder.getAdapterPosition();
             int to = target.getAdapterPosition();
-            Collections.swap(datas,from,to);
+            if (to < datas.size())
+                Collections.swap(datas, from, to);
 
-            swipeAdapter.notifyItemMoved(from,to);
+            adapter.notifyItemMoved(from, to);
             return true;
         }
 
@@ -131,9 +133,9 @@ public class DragSwipeDemoAct extends AppCompatActivity {
 
         @Override
         public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-            SwipeAdapter.ViewHolder holder = (SwipeAdapter.ViewHolder) viewHolder;
+            DragSwipeAdapter.ViewHolder holder = (DragSwipeAdapter.ViewHolder) viewHolder;
             //被选中时，改背景色
-            if(actionState != ItemTouchHelper.ACTION_STATE_IDLE){
+            if (actionState != ItemTouchHelper.ACTION_STATE_IDLE) {
                 holder.tv.setBackgroundColor(getResources().getColor(R.color.deepskyblue_pressed));
             }
             super.onSelectedChanged(viewHolder, actionState);
@@ -142,7 +144,7 @@ public class DragSwipeDemoAct extends AppCompatActivity {
         @Override
         public void clearView(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
             super.clearView(recyclerView, viewHolder);
-            SwipeAdapter.ViewHolder holder = (SwipeAdapter.ViewHolder) viewHolder;
+            DragSwipeAdapter.ViewHolder holder = (DragSwipeAdapter.ViewHolder) viewHolder;
             holder.tv.setBackgroundColor(getResources().getColor(R.color.deepskyblue));
         }
     });
@@ -183,8 +185,8 @@ public class DragSwipeDemoAct extends AppCompatActivity {
             for (int i = count; i < count + 10; i++) {
                 datas.add(i);
             }
-            swipeAdapter.setDatas(datas);
-            swipeAdapter.notifyDataSetChanged();
+            adapter.setDatas(datas);
+            adapter.notifyDataSetChanged();
             recyclerView.onLoadMoreComplete();
             super.onPostExecute(result);
         }

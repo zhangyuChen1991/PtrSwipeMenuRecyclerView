@@ -30,7 +30,7 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Log.d(TAG, "onCreateViewHolder.. viewType = " + viewType + "  HT:" + HeaderType + "  FT:" + FooterType);
         if (viewType == HeaderType) {
             headerViewHolder = new HeaderFooterViewHolder(new HeaderView(parent.getContext()));
@@ -78,15 +78,15 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
     public abstract RecyclerView.ViewHolder onCreateThisViewHolder(ViewGroup contentView, int viewType);
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public final void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if (position != 0 && position != getItemCount() - 1)
-            onBindThisViewHolder((V) holder, position);
+            onBindThisViewHolder((V) holder, position - 1);
     }
 
     public abstract void onBindThisViewHolder(V holder, int position);
 
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         //添加Header和Footer的数目
         return getThisItemCount() + 2;
     }
@@ -106,12 +106,22 @@ public abstract class SwipeMenuAdapter<V extends PtrSwipeMenuRecyclerView.ViewHo
      * @return
      */
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         if (position == 0)
             return HeaderType;
-        if (position == getThisItemCount() + 1)
+        else if (position == getThisItemCount() + 1)
             return FooterType;
-        return super.getItemViewType(position - 1);//减1去掉herder的位置
+        else
+            return getThisItemViewType(position - 1);//减1减去header位置
+    }
+
+    /**
+     * 此方法替代原Adapter中的getItemViewType方法
+     * 使用与
+     * @return
+     */
+    public int getThisItemViewType(int position) {
+        return 0;
     }
 
 

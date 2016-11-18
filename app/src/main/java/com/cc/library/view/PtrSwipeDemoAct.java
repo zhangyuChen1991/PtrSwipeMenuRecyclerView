@@ -74,9 +74,9 @@ public class PtrSwipeDemoAct extends AppCompatActivity{
         @Override
         public void onMenuClick(View view, int position) {
             if (view.getId() == R.id.menu1)
-                ToastUtil.showToast("position:" + position + "menu1", 0);
+                ToastUtil.showToast("position:" + position + ",menu1", 0);
             if (view.getId() == R.id.menu2)
-                ToastUtil.showToast("position:" + position + "menu2", 0);
+                ToastUtil.showToast("position:" + position + ",menu2", 0);
         }
     };
 
