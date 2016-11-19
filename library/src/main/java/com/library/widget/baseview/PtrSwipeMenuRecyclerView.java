@@ -301,7 +301,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
      */
     private void startScrollBackAnim() {
         ValueAnimator animator = ObjectAnimator.ofFloat(1, 0);
-        animator.setDuration(300);
+        animator.setDuration(150);
         animator.addUpdateListener(scrollBackAnimatUpdateListener);
         animator.start();
     }
@@ -324,7 +324,7 @@ public class PtrSwipeMenuRecyclerView extends RecyclerView {
      */
     private void dealPulling(float distanceY) {
 
-        float moveDistance = distanceY * 0.8f;
+        float moveDistance = distanceY * 0.6f;
         adapter.getHeaderView().setViewHeight(moveDistance);
         if (moveDistance < refreshHeight) {
             adapter.getHeaderView().setNowState(HeaderView.STATE.PULLING);

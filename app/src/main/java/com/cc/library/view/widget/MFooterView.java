@@ -50,12 +50,12 @@ public class MFooterView extends FooterView {
     @Override
     public void setLoadingViewState() {
         progressBar.setVisibility(VISIBLE);
-        tv.setText("正在加载..");
+        tv.setText("正在加载..\n(我是自定义FooterView)");
     }
 
     @Override
     public void setPullingViewState() {
         progressBar.setVisibility(INVISIBLE);
-        tv.setText("上拉加载更多");
+        tv.setText("上拉加载更多\n(我是自定义FooterView)");
     }
 }

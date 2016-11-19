@@ -48,18 +48,18 @@ public class MHeaderView extends HeaderView {
     @Override
     public void setRefreshingViewState() {
         progressBar.setVisibility(VISIBLE);
-        tv.setText("正在刷新..");
+        tv.setText("正在刷新..\n(我是自定义HeaderView)");
     }
 
     @Override
     public void setPullingViewState() {
         progressBar.setVisibility(INVISIBLE);
-        tv.setText("下拉刷新");
+        tv.setText("下拉刷新\n(我是自定义HeaderView)");
     }
 
     @Override
     public void setReadyViewState() {
         progressBar.setVisibility(INVISIBLE);
-        tv.setText("放开刷新");
+        tv.setText("放开刷新\n(我是自定义HeaderView)");
     }
 }

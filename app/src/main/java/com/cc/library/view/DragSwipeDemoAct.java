@@ -118,11 +118,12 @@ public class DragSwipeDemoAct extends AppCompatActivity {
 
             int from = viewHolder.getAdapterPosition();
             int to = target.getAdapterPosition();
-            if (to < datas.size())
+            if (to < datas.size() - 1) {//把Footerview的位置减掉（ViewType不一样）
                 Collections.swap(datas, from, to);
-
-            adapter.notifyItemMoved(from, to);
-            return true;
+                adapter.notifyItemMoved(from, to);
+                return true;
+            }
+            return false;
         }
 
         @Override
