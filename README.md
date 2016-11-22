@@ -21,5 +21,12 @@
 
 ![image](https://github.com/zhangyuChen1991/PtrSwipeMenuRecyclerView/blob/master/images/loadmore.jpg)
 
+**2.使用说明**
+> 在所需引用此库的module的build.gradle文件中添加:
+```
+  dependencies {
+     compile 'com.library.widget:library:1.0.1'
+  }
+```
 
 注：项目功能为初步实现，仍在改进中。欢迎提出意见，共同讨论共同进步！
